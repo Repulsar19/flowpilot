@@ -10,6 +10,8 @@ from models.enums import (
     ApprovalStatus,
     AuditActorType,
     DocumentStatus,
+    RedesignStage,
+    RedesignStatus,
     StepClassification,
     WorkflowExecutionStatus,
 )
@@ -27,6 +29,9 @@ class AIRecommendation(BaseModel):
     evidence: list[str] = Field(default_factory=list)
     human_approval_required: bool = False
     escalation_condition: str | None = None
+    risk_level: str | None = None
+    ai_tasks: list[str] = Field(default_factory=list)
+    human_tasks: list[str] = Field(default_factory=list)
 
 
 class ProcessStepBase(BaseModel):
@@ -92,6 +97,8 @@ class ProcessSummary(ProcessBase):
     total_cycle_time_days: float | None = None
     extraction_confidence: float | None = None
     analysis_source: str | None = None
+    redesign_status: RedesignStatus = RedesignStatus.NOT_STARTED
+    future_workflow_id: str | None = None
 
 
 class ProcessRead(ProcessBase):
@@ -106,6 +113,14 @@ class ProcessRead(ProcessBase):
     total_cycle_time_days: float | None = None
     extraction_confidence: float | None = None
     analysis_source: str | None = None
+    redesign_status: RedesignStatus = RedesignStatus.NOT_STARTED
+    redesign_stage: RedesignStage | None = None
+    redesign_error: str | None = None
+    redesign_source: str | None = None
+    bottleneck_summary: str | None = None
+    classification_summary: str | None = None
+    governance_notes: list[str] = Field(default_factory=list)
+    future_workflow_id: str | None = None
 
     model_config = {"from_attributes": True}
 
@@ -156,11 +171,16 @@ class AgentBase(BaseModel):
     purpose: str
     input_description: str
     output_description: str
+    inputs: list[str] = Field(default_factory=list)
+    outputs: list[str] = Field(default_factory=list)
     tools: list[str] = Field(default_factory=list)
     permissions: list[str] = Field(default_factory=list)
+    prohibited_actions: list[str] = Field(default_factory=list)
+    node_ids: list[str] = Field(default_factory=list)
     confidence_threshold: float = Field(default=0.85, ge=0.0, le=1.0)
     escalation_conditions: str | None = None
     human_approval_required: bool = False
+    is_ai: bool = True
     status: AgentStatus = AgentStatus.DRAFT
 
 
@@ -187,10 +207,51 @@ class WorkflowCreate(WorkflowBase):
     pass
 
 
+class WorkflowNode(BaseModel):
+    node_id: str
+    name: str
+    type: str
+    actor: str = ""
+    description: str = ""
+    replaces_step_ids: list[str] = Field(default_factory=list)
+    estimated_minutes: float = 0
+    estimated_elapsed_days: float = 0
+    human_approval_gate: bool = False
+    escalation_to: str = ""
+    agent_id: str | None = None
+
+
+class WorkflowEdge(BaseModel):
+    source: str
+    target: str
+    label: str = ""
+    is_escalation: bool = False
+
+
+class WorkflowSummary(WorkflowBase):
+    id: str
+    created_at: datetime
+    updated_at: datetime
+    node_count: int = 0
+    agent_count: int = 0
+    estimated_cycle_time_days: float | None = None
+    generation_source: str | None = None
+
+
 class WorkflowRead(WorkflowBase):
     id: str
     created_at: datetime
     updated_at: datetime
+    nodes: list[WorkflowNode] = Field(default_factory=list)
+    edges: list[WorkflowEdge] = Field(default_factory=list)
+    agents: list[AgentRead] = Field(default_factory=list)
+    removed_step_ids: list[str] = Field(default_factory=list)
+    expected_improvements: list[str] = Field(default_factory=list)
+    governance_controls: list[str] = Field(default_factory=list)
+    estimated_cycle_time_days: float | None = None
+    estimated_effort_minutes: float | None = None
+    generation_source: str | None = None
+    confidence: float | None = None
 
     model_config = {"from_attributes": True}
 
@@ -263,15 +324,20 @@ class BusinessImpactRead(BaseModel):
 
 class BottleneckRead(BaseModel):
     id: str
-    process_step_id: str
+    process_id: str
+    process_step_id: str | None = None
     step_name: str
+    step_sequence: int | None = None
+    rank: int
     problem: str
     cause: str
     estimated_delay_hours: float
     frequency: str
     suggested_improvement: str
+    opportunity: str
+    severity: str
     confidence: float
-    opportunity: str | None = None
+    evidence: list[str] = Field(default_factory=list)
 
 
 class DashboardSummary(BaseModel):

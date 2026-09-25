@@ -1,31 +1,54 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import { AlertTriangle, BookMarked, Clock, Layers, MousePointerClick, Monitor, Users } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { AlertTriangle, BookMarked, Clock, Gauge, Layers, MousePointerClick, Monitor, Sparkles, Users } from "lucide-react";
+import { listBottlenecks } from "@/lib/api";
+import { CLASS_META, CLASSIFICATION_ORDER } from "@/lib/classification";
 import { formatMinutes, formatPercent } from "@/lib/format";
-import type { ProcessRead } from "@/lib/types";
+import type { BottleneckRead, ProcessRead } from "@/lib/types";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { BottlenecksTab } from "./BottlenecksTab";
+import { ClassificationTab } from "./ClassificationTab";
 import { ProcessFlow } from "./ProcessFlow";
+import { RedesignControl } from "./RedesignControl";
 import { StepDetailPanel } from "./StepDetailPanel";
 
-type Tab = "map" | "roles" | "systems" | "pain";
+type Tab = "map" | "bottlenecks" | "classification" | "roles" | "systems" | "pain";
 
 const TABS: { key: Tab; label: string; icon: React.ElementType }[] = [
   { key: "map", label: "Process map", icon: Layers },
+  { key: "bottlenecks", label: "Bottlenecks", icon: Gauge },
+  { key: "classification", label: "AI / Automation / Human", icon: Sparkles },
   { key: "roles", label: "Roles", icon: Users },
   { key: "systems", label: "Systems", icon: Monitor },
   { key: "pain", label: "Pain points", icon: AlertTriangle },
 ];
 
-export function ProcessAnalysisView({ process }: { process: ProcessRead }) {
+export function ProcessAnalysisView({ process: initial, initialBottlenecks = [] }: { process: ProcessRead; initialBottlenecks?: BottleneckRead[] }) {
+  const [process, setProcess] = useState<ProcessRead>(initial);
+  const [bottlenecks, setBottlenecks] = useState<BottleneckRead[]>(initialBottlenecks);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [tab, setTab] = useState<Tab>("map");
 
+  // Refresh bottlenecks whenever a redesign completes.
+  const completedAt = process.redesign_status === "completed" ? process.updated_at : null;
+  useEffect(() => {
+    if (!completedAt) return;
+    listBottlenecks(process.id).then(setBottlenecks).catch(() => undefined);
+  }, [completedAt, process.id]);
+
+  const handleUpdate = useCallback((p: ProcessRead) => setProcess(p), []);
+  const focusStep = useCallback((stepId: string) => {
+    setSelectedId(stepId);
+    setTab("map");
+  }, []);
+
   const selectedIndex = process.steps.findIndex((s) => s.id === selectedId);
   const selected = selectedIndex >= 0 ? process.steps[selectedIndex] : null;
+  const classifiedCount = process.steps.filter((s) => s.classification !== "UNCLASSIFIED").length;
 
   const totals = useMemo(() => {
     const effortMin = process.steps.reduce((acc, s) => acc + (s.duration_minutes ?? 0), 0);
@@ -66,7 +89,9 @@ export function ProcessAnalysisView({ process }: { process: ProcessRead }) {
         <Stat icon={MousePointerClick} label="Decisions / handoffs" value={`${totals.decisions} / ${totals.handoffs}`} />
       </div>
 
-      <div className="flex gap-1 border-b border-surface-border">
+      <RedesignControl process={process} onUpdate={handleUpdate} />
+
+      <div className="flex flex-wrap gap-1 border-b border-surface-border">
         {TABS.map(({ key, label, icon: Icon }) => (
           <button
             key={key}
@@ -77,6 +102,8 @@ export function ProcessAnalysisView({ process }: { process: ProcessRead }) {
           >
             <Icon className="h-4 w-4" /> {label}
             {key === "pain" ? <span className="rounded-full bg-amber-100 px-1.5 text-[10px] text-amber-800">{process.pain_points.length}</span> : null}
+            {key === "bottlenecks" && bottlenecks.length ? <span className="rounded-full bg-rose-100 px-1.5 text-[10px] text-rose-800">{bottlenecks.length}</span> : null}
+            {key === "classification" && classifiedCount ? <span className="rounded-full bg-violet-100 px-1.5 text-[10px] text-violet-800">{classifiedCount}</span> : null}
           </button>
         ))}
       </div>
@@ -101,12 +128,26 @@ export function ProcessAnalysisView({ process }: { process: ProcessRead }) {
                   <p><span className="mr-2 inline-block h-2 w-6 rounded bg-amber-400 align-middle" /> Edge = handoff between roles</p>
                   <p><span className="mr-2 inline-block h-2 w-6 rounded bg-emerald-500 align-middle" /> Automation potential</p>
                   <p><span className="mr-2 inline-block h-2 w-6 rounded bg-violet-500 align-middle" /> AI suitability</p>
+                  {classifiedCount ? (
+                    <>
+                      <p className="pt-2 font-medium text-slate-700">Left accent = recommended owner</p>
+                      {CLASSIFICATION_ORDER.map((k) => (
+                        <p key={k}>
+                          <span className="mr-2 inline-block h-3 w-1.5 rounded align-middle" style={{ backgroundColor: CLASS_META[k].hex }} /> {CLASS_META[k].label}
+                        </p>
+                      ))}
+                    </>
+                  ) : null}
                 </div>
               </div>
             )}
           </div>
         </div>
       ) : null}
+
+      {tab === "bottlenecks" ? <BottlenecksTab bottlenecks={bottlenecks} summary={process.bottleneck_summary} onSelectStep={focusStep} /> : null}
+
+      {tab === "classification" ? <ClassificationTab process={process} onSelectStep={focusStep} /> : null}
 
       {tab === "roles" ? (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -174,7 +215,9 @@ export function ProcessAnalysisView({ process }: { process: ProcessRead }) {
                 </li>
               ))}
             </ol>
-            <p className="mt-4 text-xs text-slate-500">Structured bottleneck detection with delay estimates and improvement suggestions runs in the next stage.</p>
+            <button onClick={() => setTab("bottlenecks")} className="mt-4 text-xs font-medium text-brand-700 hover:underline">
+              See structured bottleneck analysis with delay estimates →
+            </button>
           </Card>
           <Card title="Regulatory references" subtitle="Cited by the SOP">
             <ul className="space-y-2">

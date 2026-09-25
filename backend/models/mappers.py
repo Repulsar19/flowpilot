@@ -6,6 +6,7 @@ from models.orm import (
     AgentORM,
     ApprovalORM,
     AuditEventORM,
+    BottleneckORM,
     DocumentORM,
     ProcessORM,
     ProcessStepORM,
@@ -17,6 +18,7 @@ from models.schemas import (
     AgentRead,
     ApprovalRead,
     AuditEventRead,
+    BottleneckRead,
     DocumentRead,
     DocumentSectionRead,
     ProcessRead,
@@ -24,8 +26,11 @@ from models.schemas import (
     ProcessStepRead,
     ProcessSummary,
     ProcessSystem,
+    WorkflowEdge,
     WorkflowExecutionRead,
+    WorkflowNode,
     WorkflowRead,
+    WorkflowSummary,
 )
 
 
@@ -60,6 +65,8 @@ def process_to_summary(row: ProcessORM) -> ProcessSummary:
         total_cycle_time_days=row.total_cycle_time_days,
         extraction_confidence=row.extraction_confidence,
         analysis_source=row.analysis_source,
+        redesign_status=row.redesign_status,
+        future_workflow_id=row.future_workflow_id,
     )
 
 
@@ -108,6 +115,34 @@ def process_to_read(row: ProcessORM) -> ProcessRead:
         total_cycle_time_days=row.total_cycle_time_days,
         extraction_confidence=row.extraction_confidence,
         analysis_source=row.analysis_source,
+        redesign_status=row.redesign_status,
+        redesign_stage=row.redesign_stage,
+        redesign_error=row.redesign_error,
+        redesign_source=row.redesign_source,
+        bottleneck_summary=row.bottleneck_summary,
+        classification_summary=row.classification_summary,
+        governance_notes=row.governance_notes,
+        future_workflow_id=row.future_workflow_id,
+    )
+
+
+def bottleneck_to_read(row: BottleneckORM, step: ProcessStepORM | None) -> BottleneckRead:
+    return BottleneckRead(
+        id=row.id,
+        process_id=row.process_id,
+        process_step_id=row.process_step_id,
+        step_name=step.name if step else "Process-level",
+        step_sequence=step.sequence if step else None,
+        rank=row.rank,
+        problem=row.problem,
+        cause=row.cause,
+        estimated_delay_hours=row.estimated_delay_hours,
+        frequency=row.frequency,
+        suggested_improvement=row.suggested_improvement,
+        opportunity=row.opportunity,
+        severity=row.severity,
+        confidence=row.confidence,
+        evidence=row.evidence,
     )
 
 
@@ -119,18 +154,63 @@ def agent_to_read(row: AgentORM) -> AgentRead:
         purpose=row.purpose,
         input_description=row.input_description,
         output_description=row.output_description,
+        inputs=json.loads(row.inputs_json or "[]"),
+        outputs=json.loads(row.outputs_json or "[]"),
         tools=json.loads(row.tools_json or "[]"),
         permissions=json.loads(row.permissions_json or "[]"),
+        prohibited_actions=json.loads(row.prohibited_actions_json or "[]"),
+        node_ids=json.loads(row.node_ids_json or "[]"),
         confidence_threshold=row.confidence_threshold,
         escalation_conditions=row.escalation_conditions,
         human_approval_required=row.human_approval_required,
+        is_ai=row.is_ai,
         status=row.status,
         created_at=row.created_at,
     )
 
 
-def workflow_to_read(row: WorkflowORM) -> WorkflowRead:
-    return WorkflowRead.model_validate(row)
+def workflow_to_summary(row: WorkflowORM, agent_count: int = 0) -> WorkflowSummary:
+    return WorkflowSummary(
+        id=row.id,
+        name=row.name,
+        description=row.description,
+        process_id=row.process_id,
+        is_future_state=row.is_future_state,
+        created_at=row.created_at,
+        updated_at=row.updated_at,
+        node_count=len(row.nodes),
+        agent_count=agent_count,
+        estimated_cycle_time_days=row.estimated_cycle_time_days,
+        generation_source=row.generation_source,
+    )
+
+
+def workflow_to_read(row: WorkflowORM, agents: list[AgentORM]) -> WorkflowRead:
+    agent_reads = [agent_to_read(a) for a in agents]
+    agent_by_node: dict[str, str] = {}
+    for a in agent_reads:
+        for nid in a.node_ids:
+            agent_by_node[nid] = a.id
+    nodes = [WorkflowNode(**n, agent_id=agent_by_node.get(n["node_id"])) for n in row.nodes]
+    return WorkflowRead(
+        id=row.id,
+        name=row.name,
+        description=row.description,
+        process_id=row.process_id,
+        is_future_state=row.is_future_state,
+        created_at=row.created_at,
+        updated_at=row.updated_at,
+        nodes=nodes,
+        edges=[WorkflowEdge(**e) for e in row.edges],
+        agents=agent_reads,
+        removed_step_ids=json.loads(row.removed_step_ids_json or "[]"),
+        expected_improvements=json.loads(row.expected_improvements_json or "[]"),
+        governance_controls=json.loads(row.governance_controls_json or "[]"),
+        estimated_cycle_time_days=row.estimated_cycle_time_days,
+        estimated_effort_minutes=row.estimated_effort_minutes,
+        generation_source=row.generation_source,
+        confidence=row.confidence,
+    )
 
 
 def execution_to_read(row: WorkflowExecutionORM) -> WorkflowExecutionRead:

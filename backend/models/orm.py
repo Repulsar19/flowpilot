@@ -12,6 +12,7 @@ from models.enums import (
     ApprovalStatus,
     AuditActorType,
     DocumentStatus,
+    RedesignStatus,
     StepClassification,
     WorkflowExecutionStatus,
 )
@@ -66,7 +67,22 @@ class ProcessORM(Base):
     extraction_confidence: Mapped[float | None] = mapped_column(Float, nullable=True)
     analysis_source: Mapped[str | None] = mapped_column(String(128), nullable=True)
 
+    # Phase 3 redesign pipeline state
+    redesign_status: Mapped[str] = mapped_column(String(32), default=RedesignStatus.NOT_STARTED)
+    redesign_stage: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    redesign_error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    redesign_source: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    bottleneck_summary: Mapped[str | None] = mapped_column(Text, nullable=True)
+    classification_summary: Mapped[str | None] = mapped_column(Text, nullable=True)
+    governance_notes_json: Mapped[str] = mapped_column(Text, default="[]")
+    future_workflow_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+
     steps: Mapped[list["ProcessStepORM"]] = relationship(back_populates="process", cascade="all, delete-orphan")
+    bottlenecks: Mapped[list["BottleneckORM"]] = relationship(back_populates="process", cascade="all, delete-orphan")
+
+    @property
+    def governance_notes(self) -> list[str]:
+        return json.loads(self.governance_notes_json or "[]")
 
     @property
     def roles(self) -> list[dict]:
@@ -124,6 +140,30 @@ class ProcessStepORM(Base):
         return json.loads(self.pain_points_json or "[]")
 
 
+class BottleneckORM(Base):
+    __tablename__ = "bottlenecks"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    process_id: Mapped[str] = mapped_column(String(36), ForeignKey("processes.id"), nullable=False)
+    process_step_id: Mapped[str | None] = mapped_column(String(36), ForeignKey("process_steps.id"), nullable=True)
+    rank: Mapped[int] = mapped_column(Integer, default=0)
+    problem: Mapped[str] = mapped_column(Text, nullable=False)
+    cause: Mapped[str] = mapped_column(Text, nullable=False)
+    estimated_delay_hours: Mapped[float] = mapped_column(Float, default=0.0)
+    frequency: Mapped[str] = mapped_column(String(256), default="")
+    suggested_improvement: Mapped[str] = mapped_column(Text, nullable=False)
+    opportunity: Mapped[str] = mapped_column(String(32), default="PROCESS_CHANGE")
+    severity: Mapped[str] = mapped_column(String(16), default="medium")
+    confidence: Mapped[float] = mapped_column(Float, default=0.0)
+    evidence_json: Mapped[str] = mapped_column(Text, default="[]")
+
+    process: Mapped["ProcessORM"] = relationship(back_populates="bottlenecks")
+
+    @property
+    def evidence(self) -> list[str]:
+        return json.loads(self.evidence_json or "[]")
+
+
 class AgentORM(Base):
     __tablename__ = "agents"
 
@@ -133,11 +173,16 @@ class AgentORM(Base):
     purpose: Mapped[str] = mapped_column(Text, nullable=False)
     input_description: Mapped[str] = mapped_column(Text, nullable=False)
     output_description: Mapped[str] = mapped_column(Text, nullable=False)
+    inputs_json: Mapped[str] = mapped_column(Text, default="[]")
+    outputs_json: Mapped[str] = mapped_column(Text, default="[]")
     tools_json: Mapped[str] = mapped_column(Text, default="[]")
     permissions_json: Mapped[str] = mapped_column(Text, default="[]")
+    prohibited_actions_json: Mapped[str] = mapped_column(Text, default="[]")
+    node_ids_json: Mapped[str] = mapped_column(Text, default="[]")
     confidence_threshold: Mapped[float] = mapped_column(Float, default=0.85)
     escalation_conditions: Mapped[str | None] = mapped_column(Text, nullable=True)
     human_approval_required: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_ai: Mapped[bool] = mapped_column(Boolean, default=True)
     status: Mapped[str] = mapped_column(String(32), default=AgentStatus.DRAFT)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
 
@@ -152,6 +197,24 @@ class WorkflowORM(Base):
     is_future_state: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow, onupdate=_utcnow)
+    # Future-state graph (Phase 3)
+    nodes_json: Mapped[str] = mapped_column(Text, default="[]")
+    edges_json: Mapped[str] = mapped_column(Text, default="[]")
+    removed_step_ids_json: Mapped[str] = mapped_column(Text, default="[]")
+    expected_improvements_json: Mapped[str] = mapped_column(Text, default="[]")
+    governance_controls_json: Mapped[str] = mapped_column(Text, default="[]")
+    estimated_cycle_time_days: Mapped[float | None] = mapped_column(Float, nullable=True)
+    estimated_effort_minutes: Mapped[float | None] = mapped_column(Float, nullable=True)
+    generation_source: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    confidence: Mapped[float | None] = mapped_column(Float, nullable=True)
+
+    @property
+    def nodes(self) -> list[dict]:
+        return json.loads(self.nodes_json or "[]")
+
+    @property
+    def edges(self) -> list[dict]:
+        return json.loads(self.edges_json or "[]")
 
 
 class WorkflowExecutionORM(Base):

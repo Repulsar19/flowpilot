@@ -1,12 +1,15 @@
 import type {
   AIStatus,
   AgentRead,
+  BottleneckRead,
   DashboardSummary,
   DocumentRead,
   DocumentText,
   HealthResponse,
   ProcessRead,
   ProcessSummary,
+  WorkflowRead,
+  WorkflowSummary,
 } from "./types";
 
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
@@ -69,10 +72,23 @@ export function uploadDocument(file: File): Promise<DocumentRead> {
 export const listProcesses = () => fetchJson<ProcessSummary[]>("/api/processes");
 export const getProcess = (id: string) => fetchJson<ProcessRead>(`/api/processes/${id}`);
 export const deleteProcess = (id: string) => fetchJson<void>(`/api/processes/${id}`, { method: "DELETE" });
+export const listBottlenecks = (id: string) => fetchJson<BottleneckRead[]>(`/api/processes/${id}/bottlenecks`);
+export const getFutureState = (id: string) => fetchJson<WorkflowRead>(`/api/processes/${id}/future-state`);
+export const redesignProcess = (id: string, forceLive = false) =>
+  fetchJson<ProcessRead>(`/api/processes/${id}/redesign${forceLive ? "?force_live=true" : ""}`, {
+    method: "POST",
+  });
+
+// ---- Workflows ----------------------------------------------------------
+
+export const listWorkflows = (futureOnly = false) =>
+  fetchJson<WorkflowSummary[]>(`/api/workflows${futureOnly ? "?future_state_only=true" : ""}`);
+export const getWorkflow = (id: string) => fetchJson<WorkflowRead>(`/api/workflows/${id}`);
 
 // ---- Agents -------------------------------------------------------------
 
 export const listAgents = () => fetchJson<AgentRead[]>("/api/agents");
+export const getAgent = (id: string) => fetchJson<AgentRead>(`/api/agents/${id}`);
 
 // ---- Fallbacks ----------------------------------------------------------
 

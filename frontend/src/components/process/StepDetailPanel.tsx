@@ -1,10 +1,12 @@
 "use client";
 
-import { AlertTriangle, ArrowDownToLine, ArrowUpFromLine, BookOpen, GitBranch, Monitor, X } from "lucide-react";
+import { AlertTriangle, ArrowDownToLine, ArrowUpFromLine, BookOpen, GitBranch, Monitor, Sparkles, X } from "lucide-react";
+import { CLASS_META } from "@/lib/classification";
 import { formatDays, formatMinutes } from "@/lib/format";
 import type { ProcessStepRead } from "@/lib/types";
 import { Badge } from "@/components/ui/Badge";
 import { ScoreBar } from "@/components/ui/ScoreBar";
+import { RecommendationCard } from "./RecommendationCard";
 
 function Section({ icon: Icon, title, children }: { icon: React.ElementType; title: string; children: React.ReactNode }) {
   return (
@@ -40,6 +42,12 @@ export function StepDetailPanel({
       </div>
 
       <div className="flex-1 space-y-5 overflow-y-auto px-5 py-4">
+        {step.ai_recommendation ? (
+          <Section icon={Sparkles} title="AI recommendation">
+            <RecommendationCard classification={step.classification} rec={step.ai_recommendation} compact />
+          </Section>
+        ) : null}
+
         {step.description ? <p className="text-sm leading-relaxed text-slate-700">{step.description}</p> : null}
 
         <div className="grid grid-cols-2 gap-3 rounded-lg bg-slate-50 p-3 text-sm">
@@ -112,10 +120,12 @@ export function StepDetailPanel({
           )}
         </Section>
 
-        <div className="rounded-lg border border-dashed border-surface-border p-3 text-xs text-slate-500">
-          Classification: <span className="font-medium text-slate-700">{step.classification.replace("_", " + ")}</span>
-          {step.classification === "UNCLASSIFIED" ? " — AI / Automation / Human classification runs in the next stage." : ""}
-        </div>
+        {!step.ai_recommendation ? (
+          <div className="rounded-lg border border-dashed border-surface-border p-3 text-xs text-slate-500">
+            Classification: <span className="font-medium text-slate-700">{CLASS_META[step.classification].label}</span>
+            {step.classification === "UNCLASSIFIED" ? " — run the AI redesign to classify this step." : ""}
+          </div>
+        ) : null}
       </div>
     </aside>
   );

@@ -3,6 +3,7 @@
 import { memo } from "react";
 import { Handle, Position, type Node, type NodeProps } from "@xyflow/react";
 import { Clock, GitBranch, User } from "lucide-react";
+import { CLASS_META } from "@/lib/classification";
 import { formatMinutes } from "@/lib/format";
 import type { ProcessStepRead } from "@/lib/types";
 import { ScoreBar } from "@/components/ui/ScoreBar";
@@ -23,10 +24,13 @@ const HANDLE_CLASS = "!h-2 !w-2 !border-0 !bg-transparent";
 
 function ProcessStepNodeComponent({ data }: NodeProps<StepNode>) {
   const { step, index, selected } = data;
+  const meta = CLASS_META[step.classification] ?? CLASS_META.UNCLASSIFIED;
+  const classified = step.classification !== "UNCLASSIFIED";
+  const ClassIcon = meta.icon;
   return (
     <div
       style={{ width: NODE_WIDTH }}
-      className={`rounded-xl border bg-white p-3 shadow-card transition-shadow ${
+      className={`rounded-xl border border-l-4 bg-white p-3 shadow-card transition-shadow ${meta.accent} ${
         selected ? "border-brand-500 ring-2 ring-brand-100" : "border-surface-border hover:border-slate-300"
       }`}
     >
@@ -46,11 +50,18 @@ function ProcessStepNodeComponent({ data }: NodeProps<StepNode>) {
             <User className="h-3 w-3 shrink-0" /> {step.actor ?? "Unassigned"}
           </p>
         </div>
-        {step.decision_required ? (
-          <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-800">
-            <GitBranch className="h-3 w-3" /> Decision
-          </span>
-        ) : null}
+        <div className="flex shrink-0 flex-col items-end gap-1">
+          {classified ? (
+            <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ${meta.badge}`}>
+              <ClassIcon className="h-3 w-3" /> {meta.label}
+            </span>
+          ) : null}
+          {step.decision_required ? (
+            <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-800">
+              <GitBranch className="h-3 w-3" /> Decision
+            </span>
+          ) : null}
+        </div>
       </div>
 
       <div className="mt-2 flex items-center gap-3 text-[11px] text-slate-600">

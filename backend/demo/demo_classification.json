@@ -1,0 +1,143 @@
+{
+  "decisions": [
+    {
+      "step_id": "step_01",
+      "classification": "AI_AGENT",
+      "recommendation": "Replace daily manual monitoring with a Regulatory Intake Agent that watches the designated sources, de-duplicates items, extracts metadata and writes the Regulatory Intelligence Log entry and archive automatically.",
+      "reasoning": "The task is high-volume, repetitive and document-centric: reading publication metadata, classifying document type and authority, and logging. Errors are recoverable because every item is still screened downstream, so no approval gate is needed at this stage.",
+      "confidence": 0.92,
+      "risk_level": "low",
+      "human_approval_required": false,
+      "escalation_condition": "Source unreachable for > 24h, or document type cannot be classified with confidence ≥ 0.80",
+      "ai_tasks": ["Monitor FDA, EMA, ICH and pharmacopoeial sources plus the e-mail digest", "De-duplicate and extract source, date, title, URL, type and authority", "Create the RIL entry and archive the source document"],
+      "human_tasks": ["Weekly spot-check of a sample of logged items by the RA Specialist"],
+      "evidence": ["Section 6.1.1", "Section 6.1.2", "Section 6.1.4"]
+    },
+    {
+      "step_id": "step_02",
+      "classification": "HUMAN_AI",
+      "recommendation": "An Applicability Screening Agent reads each item, compares it with the product, site and registration inventory and proposes Applicable / Not Applicable with rationale and confidence. The RA Specialist decides all Applicable and low-confidence items; high-confidence Not Applicable items are batch-countersigned by the RA Manager.",
+      "reasoning": "Applicability requires document understanding and matching against company context, which AI does well, but the determination is a documented regulatory decision that must remain attributable to a person. Human+AI keeps accountability while removing 2-4 hours of reading per item.",
+      "confidence": 0.88,
+      "risk_level": "medium",
+      "human_approval_required": true,
+      "escalation_condition": "Confidence < 0.85, proposed outcome is Applicable, or the update references a registered product or a data-integrity requirement",
+      "ai_tasks": ["Read the full source document", "Match scope against products, sites, registrations and systems", "Draft the applicability rationale and the 2-page Regulatory Summary"],
+      "human_tasks": ["Confirm or overturn the applicability decision", "Countersign Not Applicable determinations (weekly batch)"],
+      "evidence": ["Section 6.2.1", "Section 6.2.2", "Section 6.2.3"]
+    },
+    {
+      "step_id": "step_03",
+      "classification": "HUMAN_AI",
+      "recommendation": "An Impact Assessment Agent drafts the IA by semantically matching the regulatory change to SOPs, batch records, specifications, validation documents and registrations, then issues structured confirm/adjust tasks to SMEs with a 2-day SLA.",
+      "reasoning": "Identifying affected documents is a retrieval and reasoning task well suited to AI; judging functional impact and implementation effort requires SME knowledge. Pre-filling converts SME research into validation and removes most of the e-mail coordination.",
+      "confidence": 0.9,
+      "risk_level": "medium",
+      "human_approval_required": true,
+      "escalation_condition": "Any SME disagrees with the draft, no SME response within 2 business days, or agent confidence < 0.85 for any affected-document match",
+      "ai_tasks": ["Search DMS and eQMS for affected documents and systems", "Draft FRM-QA-042-01 with candidate impacts", "Generate targeted SME questions and track responses"],
+      "human_tasks": ["SMEs confirm or adjust impacts and effort estimates", "QA Analyst resolves conflicts and finalises the IA"],
+      "evidence": ["Section 6.3.1", "Section 6.3.3", "Section 6.3.4"]
+    },
+    {
+      "step_id": "step_04",
+      "classification": "HUMAN_AI",
+      "recommendation": "A Risk Classification Agent proposes Low / Medium / High by mapping the IA against the SOP criteria (registered details, CQAs, CPPs, data integrity, submission need) with an explicit rationale. The QA Manager confirms the classification from an approval queue.",
+      "reasoning": "The criteria are explicit and rule-like, so AI can prepare a defensible proposal, but risk classification determines the approval pathway and is a quality decision under ICH Q9 that must stay with the accountable QA Manager.",
+      "confidence": 0.86,
+      "risk_level": "high",
+      "human_approval_required": true,
+      "escalation_condition": "Always requires QA Manager confirmation; auto-escalate to Head of Quality if proposed HIGH or confidence < 0.85",
+      "ai_tasks": ["Map IA findings to Low/Medium/High criteria", "Draft classification rationale", "Recommend the approval pathway"],
+      "human_tasks": ["QA Manager confirms or changes the classification and records the decision"],
+      "evidence": ["Section 6.4.1", "Section 6.4.2", "Section 6.4.3"]
+    },
+    {
+      "step_id": "step_05",
+      "classification": "AUTOMATION",
+      "recommendation": "Create the Change Request automatically from the structured IA, Regulatory Summary and risk classification; populate all 14 mandatory fields, attach source documents and pre-fill the action plan for the Process Owner to review and submit.",
+      "reasoning": "Every field already exists in upstream artefacts. Mapping them into the eQMS is deterministic data movement with no judgement, so rule-based automation is the right tool and removes the 60% duplicate entry.",
+      "confidence": 0.95,
+      "risk_level": "low",
+      "human_approval_required": false,
+      "escalation_condition": "Any mandatory field cannot be populated from source data, or eQMS validation fails",
+      "ai_tasks": ["Map IA and summary fields to the 14 eQMS fields", "Attach source documents", "Generate action items with default owners and due dates"],
+      "human_tasks": ["Process Owner reviews the pre-filled CR and submits it"],
+      "evidence": ["Section 6.5.1", "Section 6.5.2", "Section 6.5.4"]
+    },
+    {
+      "step_id": "step_06",
+      "classification": "HUMAN_AI",
+      "recommendation": "A Compliance Pre-Review Agent checks the CR for regulatory interpretation, policy alignment, ALCOA+ coverage, action completeness and likely filing impact, and flags gaps before submission. The Compliance Officer and RA Manager perform the formal review on a clean pack.",
+      "reasoning": "Consistency checking against regulatory text and policy is a strength of AI and eliminates most first-cycle comments. The compliance determination and filing strategy carry regulatory accountability and stay human.",
+      "confidence": 0.84,
+      "risk_level": "high",
+      "human_approval_required": true,
+      "escalation_condition": "Always requires Compliance Officer sign-off; agent flags with confidence < 0.85 are highlighted for reviewer attention",
+      "ai_tasks": ["Check CR against regulatory text and internal policy library", "Run ALCOA+ and completeness checklist", "Draft filing-impact note for RA Manager"],
+      "human_tasks": ["Compliance Officer confirms compliance position", "RA Manager decides filing strategy"],
+      "evidence": ["Section 6.6.1", "Section 6.6.2", "Section 6.6.3"]
+    },
+    {
+      "step_id": "step_07",
+      "classification": "HUMAN",
+      "recommendation": "Keep approval fully human but change the mechanism: asynchronous CCB e-voting in the eQMS with a 48-hour SLA for Medium risk, and e-voting plus Head of Quality and Site Head Part 11 signatures for High risk. AI only assembles the briefing pack.",
+      "reasoning": "Approval of a GxP change is an accountability decision with electronic-signature requirements under 21 CFR Part 11. AI must not approve, reject or condition changes. The bottleneck is cadence, not judgement, so the fix is a process change.",
+      "confidence": 0.97,
+      "risk_level": "high",
+      "human_approval_required": true,
+      "escalation_condition": "Not applicable — human decision. Any CCB member may request a synchronous meeting for contested changes.",
+      "ai_tasks": ["Assemble the CCB briefing pack with IA, risk rationale, compliance review and open questions"],
+      "human_tasks": ["CCB members vote approve / reject / return with conditions", "Head of Quality and Site Head sign High risk changes"],
+      "evidence": ["Section 6.7.2", "Section 6.7.3", "Section 6.7.5"]
+    },
+    {
+      "step_id": "step_08",
+      "classification": "HUMAN_AI",
+      "recommendation": "A Documentation Drafting Agent produces first-pass redlines for each affected document and validates numbering, cross-references and citations; the document owner and QA approve in the DMS; issuance and effective dating are automated.",
+      "reasoning": "Drafting text changes from a known requirement and checking document consistency is generative and rule-checking work that AI performs quickly and consistently. Approval of a controlled GxP document must remain with the owner and QA.",
+      "confidence": 0.87,
+      "risk_level": "medium",
+      "human_approval_required": true,
+      "escalation_condition": "Document owner rejects the redline, agent cannot locate an insertion point with confidence ≥ 0.85, or the change touches a validated system procedure",
+      "ai_tasks": ["Generate redlines for each affected document", "Validate numbering, cross-references and regulatory citations", "Prepare the approval routing per the document approval matrix"],
+      "human_tasks": ["Document owner reviews and edits redlines", "QA and functional heads approve in the DMS"],
+      "evidence": ["Section 6.8.1", "Section 6.8.2", "Section 6.8.3"]
+    },
+    {
+      "step_id": "step_09",
+      "classification": "AUTOMATION",
+      "recommendation": "Automate training assignment from the LMS curriculum matrix on document approval, weekly completion monitoring, reminders and the 95% escalation rule. Retain the 30-day effective-date window and instructor-led training for High risk changes.",
+      "reasoning": "Assignment, monitoring and reminders are deterministic rules already defined in the SOP. The remaining human work is delivering instructor-led sessions and handling escalations.",
+      "confidence": 0.93,
+      "risk_level": "low",
+      "human_approval_required": false,
+      "escalation_condition": "Completion < 95% at 5 days before the effective date → functional manager; High risk change → Training Coordinator schedules instructor-led session",
+      "ai_tasks": ["Assign training on document approval", "Send reminders and weekly completion reports", "Trigger escalation notices"],
+      "human_tasks": ["Deliver instructor-led training for High risk changes", "Managers handle escalations"],
+      "evidence": ["Section 6.9.1", "Section 6.9.2", "Section 6.9.3"]
+    },
+    {
+      "step_id": "step_10",
+      "classification": "HUMAN_AI",
+      "recommendation": "A Verification & Audit Agent cross-checks the eQMS, DMS, LMS and submissions tracker, compiles a closure package with evidence links and schedules the 90-day effectiveness check; the QA Analyst reviews and closes the CR.",
+      "reasoning": "Cross-system verification is a retrieval and consistency task suited to AI, and it produces a complete audit trail. Closing a change is a QA decision and remains human.",
+      "confidence": 0.89,
+      "risk_level": "medium",
+      "human_approval_required": true,
+      "escalation_condition": "Any verification check fails, or evidence is missing for an action item",
+      "ai_tasks": ["Verify action items, document effectiveness, training ≥ 95% and submission status", "Compile the closure package with evidence links", "Schedule the effectiveness check"],
+      "human_tasks": ["QA Analyst reviews the package and closes the CR"],
+      "evidence": ["Section 6.10.1", "Section 6.10.2", "Section 6.10.3"]
+    }
+  ],
+  "summary": "Of 10 current-state steps, 1 becomes a pure AI agent (intake), 2 become rule-based automation (CR creation, training administration), 6 become Human + AI where agents prepare and named roles decide, and 1 (CCB approval) stays fully human with a cadence change. Every decision that carries regulatory accountability keeps a human approval gate.",
+  "governance_notes": [
+    "Approvals, risk acceptance and 21 CFR Part 11 electronic signatures are never delegated to AI.",
+    "Every AI agent has a confidence threshold (0.85) below which work is routed to a named human role.",
+    "Any HIGH risk classification forces human approval before execution regardless of agent confidence.",
+    "All agent outputs cite their source documents and are written to the audit trail with model, inputs and confidence.",
+    "Agents operate with least-privilege system permissions: read broadly, write drafts only, never approve or delete."
+  ],
+  "confidence": 0.89
+}

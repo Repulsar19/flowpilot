@@ -1,18 +1,28 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
-from models.mappers import execution_to_read, workflow_to_read
-from models.orm import WorkflowExecutionORM, WorkflowORM
-from models.schemas import MessageResponse, WorkflowExecutionRead, WorkflowRead
+from models.mappers import execution_to_read, workflow_to_read, workflow_to_summary
+from models.orm import AgentORM, WorkflowExecutionORM, WorkflowORM
+from models.schemas import MessageResponse, WorkflowExecutionRead, WorkflowRead, WorkflowSummary
 from services.database import get_db
 
 router = APIRouter(prefix="/workflows", tags=["workflows"])
 
 
-@router.get("", response_model=list[WorkflowRead])
-def list_workflows(db: Session = Depends(get_db)) -> list[WorkflowRead]:
-    rows = db.query(WorkflowORM).order_by(WorkflowORM.created_at.desc()).all()
-    return [workflow_to_read(r) for r in rows]
+@router.get("", response_model=list[WorkflowSummary])
+def list_workflows(
+    future_state_only: bool = Query(default=False),
+    db: Session = Depends(get_db),
+) -> list[WorkflowSummary]:
+    query = db.query(WorkflowORM)
+    if future_state_only:
+        query = query.filter(WorkflowORM.is_future_state.is_(True))
+    rows = query.order_by(WorkflowORM.created_at.desc()).all()
+    out: list[WorkflowSummary] = []
+    for r in rows:
+        agent_count = db.query(AgentORM).filter(AgentORM.workflow_id == r.id).count()
+        out.append(workflow_to_summary(r, agent_count))
+    return out
 
 
 @router.get("/{workflow_id}", response_model=WorkflowRead)
@@ -20,7 +30,8 @@ def get_workflow(workflow_id: str, db: Session = Depends(get_db)) -> WorkflowRea
     row = db.get(WorkflowORM, workflow_id)
     if not row:
         raise HTTPException(status_code=404, detail="Workflow not found")
-    return workflow_to_read(row)
+    agents = db.query(AgentORM).filter(AgentORM.workflow_id == row.id).all()
+    return workflow_to_read(row, agents)
 
 
 @router.get("/{workflow_id}/executions", response_model=list[WorkflowExecutionRead])

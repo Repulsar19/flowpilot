@@ -16,6 +16,10 @@ export type StepClassification =
   | "HUMAN_AI"
   | "UNCLASSIFIED";
 
+export type RedesignStatus = "not_started" | "running" | "completed" | "failed";
+export type RedesignStage = "bottlenecks" | "classification" | "future_state" | "done";
+export type RiskLevel = "low" | "medium" | "high";
+
 export interface AIRecommendation {
   recommendation: string;
   reasoning: string;
@@ -23,6 +27,9 @@ export interface AIRecommendation {
   evidence: string[];
   human_approval_required: boolean;
   escalation_condition?: string | null;
+  risk_level?: RiskLevel | null;
+  ai_tasks: string[];
+  human_tasks: string[];
 }
 
 export interface AuditEventRead {
@@ -109,6 +116,8 @@ export interface ProcessSummary {
   total_cycle_time_days?: number | null;
   extraction_confidence?: number | null;
   analysis_source?: string | null;
+  redesign_status: RedesignStatus;
+  future_workflow_id?: string | null;
 }
 
 export interface ProcessRead {
@@ -126,6 +135,83 @@ export interface ProcessRead {
   total_cycle_time_days?: number | null;
   extraction_confidence?: number | null;
   analysis_source?: string | null;
+  redesign_status: RedesignStatus;
+  redesign_stage?: RedesignStage | null;
+  redesign_error?: string | null;
+  redesign_source?: string | null;
+  bottleneck_summary?: string | null;
+  classification_summary?: string | null;
+  governance_notes: string[];
+  future_workflow_id?: string | null;
+}
+
+export type BottleneckOpportunity = "AI_AGENT" | "AUTOMATION" | "HUMAN" | "HUMAN_AI" | "PROCESS_CHANGE";
+export type Severity = "low" | "medium" | "high";
+
+export interface BottleneckRead {
+  id: string;
+  process_id: string;
+  process_step_id?: string | null;
+  step_name: string;
+  step_sequence?: number | null;
+  rank: number;
+  problem: string;
+  cause: string;
+  estimated_delay_hours: number;
+  frequency: string;
+  suggested_improvement: string;
+  opportunity: BottleneckOpportunity;
+  severity: Severity;
+  confidence: number;
+  evidence: string[];
+}
+
+export type WorkflowNodeType = "START" | "END" | "AI_AGENT" | "AUTOMATION" | "HUMAN" | "HUMAN_AI" | "DECISION";
+
+export interface WorkflowNodeRead {
+  node_id: string;
+  name: string;
+  type: WorkflowNodeType;
+  actor: string;
+  description: string;
+  replaces_step_ids: string[];
+  estimated_minutes: number;
+  estimated_elapsed_days: number;
+  human_approval_gate: boolean;
+  escalation_to: string;
+  agent_id?: string | null;
+}
+
+export interface WorkflowEdgeRead {
+  source: string;
+  target: string;
+  label: string;
+  is_escalation: boolean;
+}
+
+export interface WorkflowSummary {
+  id: string;
+  name: string;
+  description?: string | null;
+  process_id?: string | null;
+  is_future_state: boolean;
+  created_at: string;
+  updated_at: string;
+  node_count: number;
+  agent_count: number;
+  estimated_cycle_time_days?: number | null;
+  generation_source?: string | null;
+}
+
+export interface WorkflowRead extends Omit<WorkflowSummary, "node_count" | "agent_count"> {
+  nodes: WorkflowNodeRead[];
+  edges: WorkflowEdgeRead[];
+  agents: AgentRead[];
+  removed_step_ids: string[];
+  expected_improvements: string[];
+  governance_controls: string[];
+  estimated_effort_minutes?: number | null;
+  confidence?: number | null;
 }
 
 export interface ProcessStepRead {
@@ -158,11 +244,16 @@ export interface AgentRead {
   purpose: string;
   input_description: string;
   output_description: string;
+  inputs: string[];
+  outputs: string[];
   tools: string[];
   permissions: string[];
+  prohibited_actions: string[];
+  node_ids: string[];
   confidence_threshold: number;
   escalation_conditions?: string | null;
   human_approval_required: boolean;
+  is_ai: boolean;
   status: string;
   created_at: string;
 }

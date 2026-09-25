@@ -13,6 +13,22 @@ class DocumentStatus(StrEnum):
     FAILED = "failed"
 
 
+class RedesignStatus(StrEnum):
+    """Lifecycle of the bottleneck → classification → future-state pipeline for a process."""
+
+    NOT_STARTED = "not_started"
+    RUNNING = "running"
+    COMPLETED = "completed"
+    FAILED = "failed"
+
+
+class RedesignStage(StrEnum):
+    BOTTLENECKS = "bottlenecks"
+    CLASSIFICATION = "classification"
+    FUTURE_STATE = "future_state"
+    DONE = "done"
+
+
 class StepClassification(StrEnum):
     AI_AGENT = "AI_AGENT"
     AUTOMATION = "AUTOMATION"

@@ -1,0 +1,115 @@
+{
+  "bottlenecks": [
+    {
+      "step_id": "step_03",
+      "problem": "Impact assessment takes 7 to 12 business days, almost all of it waiting for SME e-mail responses.",
+      "cause": "Functional input is requested by unstructured e-mail with a 5-day SLA; the QA Analyst averages 3.2 follow-ups per SME and must reconcile conflicting answers in meetings. Affected documents are found by manually searching spreadsheets rather than by content.",
+      "estimated_delay_hours": 76,
+      "frequency": "Every applicable change (~3 per week)",
+      "suggested_improvement": "An Impact Assessment Agent pre-identifies affected SOPs, products and systems by semantic search across the DMS and eQMS, drafts the IA form and sends SMEs a structured confirm/adjust task with a 2-day SLA and automated reminders. SMEs validate rather than research.",
+      "opportunity": "HUMAN_AI",
+      "severity": "high",
+      "confidence": 0.9,
+      "evidence": ["Section 6.3.2", "Section 6.3.4", "Section 6.3.5"]
+    },
+    {
+      "step_id": "step_08",
+      "problem": "Controlled document revision takes 10 to 15 business days per change with 1.4 formatting/citation errors per document set.",
+      "cause": "Authors draft redlines by hand for an average of 4 documents; Document Control then checks numbering and cross-references manually; errors found at QA review trigger another cycle.",
+      "estimated_delay_hours": 100,
+      "frequency": "Every approved change",
+      "suggested_improvement": "A Documentation Drafting Agent generates first-pass redlines that insert the regulatory requirement into each affected document and validates cross-references, numbering and citations before routing to the document owner and QA for approval.",
+      "opportunity": "HUMAN_AI",
+      "severity": "high",
+      "confidence": 0.86,
+      "evidence": ["Section 6.8.2", "Section 6.8.5", "Section 8.4"]
+    },
+    {
+      "step_id": "step_07",
+      "problem": "Change Requests wait an average of 4.5 business days for the weekly CCB, and 20% are returned and re-presented the following week.",
+      "cause": "Approval is tied to a fixed Tuesday meeting cadence rather than to readiness; incomplete packs are only discovered in the meeting.",
+      "estimated_delay_hours": 43,
+      "frequency": "Every Medium/High risk change; 20% incur a second week",
+      "suggested_improvement": "Replace the weekly meeting with asynchronous CCB e-voting inside the eQMS with a 48-hour SLA, fed by an AI-generated briefing pack that has passed completeness checks. Part 11 signatures and the approve/reject decision remain fully human.",
+      "opportunity": "PROCESS_CHANGE",
+      "severity": "high",
+      "confidence": 0.88,
+      "evidence": ["Section 6.7.1", "Section 6.7.5", "Section 8.3"]
+    },
+    {
+      "step_id": "step_02",
+      "problem": "Each logged item requires 2 to 4 hours of full-document reading, and Not Applicable decisions wait up to 5 business days for RA Manager countersignature.",
+      "cause": "Applicability is determined by a specialist reading every source document in full; there is no pre-screening against the product, site and registration inventory.",
+      "estimated_delay_hours": 36,
+      "frequency": "~40 items per week; ~92% end as Not Applicable",
+      "suggested_improvement": "An Applicability Screening Agent compares each update against the registration and product inventory, proposes Applicable / Not Applicable with rationale and confidence, and routes low-confidence or applicable items to the RA Specialist. High-confidence Not Applicable items are batch-countersigned weekly.",
+      "opportunity": "HUMAN_AI",
+      "severity": "high",
+      "confidence": 0.9,
+      "evidence": ["Section 6.2.1", "Section 6.2.2", "Section 6.2.4", "Section 2.3"]
+    },
+    {
+      "step_id": "step_01",
+      "problem": "Approximately 40 regulatory items per week are monitored, downloaded and logged by hand, and only 71% of applicable updates are captured within 2 business days.",
+      "cause": "Daily manual review of five source types and an e-mail digest, with metadata re-typed into an Excel log.",
+      "estimated_delay_hours": 13,
+      "frequency": "Daily; ~13 hours of effort per week",
+      "suggested_improvement": "A Regulatory Intake Agent monitors the sources, de-duplicates, extracts metadata (authority, type, dates, affected topics) and writes the RIL entry and archive automatically within hours of publication.",
+      "opportunity": "AI_AGENT",
+      "severity": "medium",
+      "confidence": 0.92,
+      "evidence": ["Section 6.1.1", "Section 6.1.2", "Section 6.1.4", "Section 8.2"]
+    },
+    {
+      "step_id": "step_06",
+      "problem": "Compliance review takes 3 to 5 business days and averages 1.6 cycles before all comments are closed.",
+      "cause": "Reviewers discover gaps in regulatory interpretation, ALCOA+ coverage and action completeness only after the CR is submitted; there is no pre-submission check.",
+      "estimated_delay_hours": 32,
+      "frequency": "Every change; 60% need a second cycle",
+      "suggested_improvement": "A Compliance Pre-Review Agent checks the CR against the regulatory text, internal policy library and data-integrity checklist and flags gaps to the Process Owner before submission. The Compliance Officer and RA Manager review a clean pack and retain the decision.",
+      "opportunity": "HUMAN_AI",
+      "severity": "medium",
+      "confidence": 0.84,
+      "evidence": ["Section 6.6.1", "Section 6.6.3", "Section 6.6.4"]
+    },
+    {
+      "step_id": "step_04",
+      "problem": "A 1 to 2 hour risk classification waits 2 to 3 business days for QA Manager availability.",
+      "cause": "Classification criteria are rule-like (ICH Q9 categories) but the task is queued behind the manager's calendar.",
+      "estimated_delay_hours": 20,
+      "frequency": "Every applicable change",
+      "suggested_improvement": "A Risk Classification Agent proposes Low / Medium / High with rationale mapped to the SOP criteria; the QA Manager confirms from a prioritised approval queue. The decision and accountability remain with the QA Manager.",
+      "opportunity": "HUMAN_AI",
+      "severity": "medium",
+      "confidence": 0.85,
+      "evidence": ["Section 6.4.1", "Section 6.4.3", "Section 6.4.4"]
+    },
+    {
+      "step_id": "step_05",
+      "problem": "About 60% of Change Request creation effort is re-typing data already captured in the Impact Assessment and Regulatory Summary.",
+      "cause": "The IA form (Word/PDF), the RIL (Excel) and the eQMS are disconnected, so 14 mandatory fields are populated manually.",
+      "estimated_delay_hours": 1.2,
+      "frequency": "Every applicable change",
+      "suggested_improvement": "Automatically create the CR from the structured IA and Regulatory Summary, attach source documents and pre-populate the action plan; the Process Owner reviews and submits.",
+      "opportunity": "AUTOMATION",
+      "severity": "low",
+      "confidence": 0.95,
+      "evidence": ["Section 6.5.1", "Section 6.5.4"]
+    },
+    {
+      "step_id": "step_09",
+      "problem": "Training runs 20 to 30 calendar days with 4 to 6 hours of coordinator effort spent on manual reminders and completion reporting.",
+      "cause": "Assignment, weekly monitoring, reminders and escalation are performed by hand from LMS exports.",
+      "estimated_delay_hours": 5,
+      "frequency": "Every approved change",
+      "suggested_improvement": "Automate assignment from the curriculum matrix, reminders and the 95% completion escalation rule. The 30-day effective-date window is a policy control and is retained; only the coordination effort is removed.",
+      "opportunity": "AUTOMATION",
+      "severity": "low",
+      "confidence": 0.8,
+      "evidence": ["Section 6.9.1", "Section 6.9.3", "Section 6.9.4"]
+    }
+  ],
+  "summary": "Elapsed time is dominated by waiting rather than work: SME coordination (7-12 days), document revision (10-15 days), the weekly CCB cadence (4.5 days plus 20% re-presentation), compliance review cycles (3-5 days) and manager availability for risk classification (2-3 days). Effort is dominated by high-volume manual screening of ~40 regulatory items a week, of which ~92% are not applicable. Duplicate data entry between the RIL, IA form and eQMS adds rework and error opportunities.",
+  "total_addressable_delay_hours": 326,
+  "confidence": 0.88
+}
