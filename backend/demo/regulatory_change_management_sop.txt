@@ -1,0 +1,308 @@
+MERIDIAN BIOPHARMA (FICTIONAL COMPANY — DEMONSTRATION DATA ONLY)
+STANDARD OPERATING PROCEDURE
+
+SOP Number: SOP-QA-042
+Title: Regulatory Change Management — Assessment and Implementation of External Regulatory Updates
+Version: 4.2
+Effective Date: 01-Mar-2025
+Owner: Quality Assurance
+Classification: GxP-Critical
+
+NOTE: This SOP is a fictional, simplified document created for a hackathon demonstration. It is
+modelled on publicly available regulatory frameworks and does not represent the procedures of any
+real company. All names, systems, timings and volumes are illustrative.
+
+--------------------------------------------------------------------------------
+1. PURPOSE
+--------------------------------------------------------------------------------
+1.1 This procedure defines how Meridian Biopharma identifies, assesses, approves and implements
+    changes arising from new or revised external regulatory requirements (e.g. FDA guidance, EMA
+    guidelines, ICH harmonised guidelines, national pharmacopoeia updates) so that the Pharmaceutical
+    Quality System (PQS) remains in a continual state of compliance.
+
+1.2 The procedure ensures that regulatory changes are evaluated for impact, risk-classified, approved
+    by the appropriate authority, implemented through controlled documentation and training, and
+    verified for effectiveness, in accordance with the change management system expectations of
+    ICH Q10 Section 3.2.3.
+
+--------------------------------------------------------------------------------
+2. SCOPE
+--------------------------------------------------------------------------------
+2.1 This SOP applies to all externally originated regulatory updates that may affect GxP activities
+    at Meridian Biopharma manufacturing, quality control and regulatory affairs functions at the
+    Northbridge and Eastfield sites.
+
+2.2 Internally originated changes (e.g. equipment modifications, process improvements) are handled
+    under SOP-QA-018 (Change Control) and are outside the scope of this document.
+
+2.3 Approximately 35 to 45 external regulatory notifications are received per week across all
+    monitored sources. Historically, approximately 8 percent are determined to be applicable to
+    Meridian operations.
+
+--------------------------------------------------------------------------------
+3. REFERENCES
+--------------------------------------------------------------------------------
+3.1 ICH Q10 — Pharmaceutical Quality System, Section 3.2.3 (Change Management System)
+3.2 ICH Q9(R1) — Quality Risk Management
+3.3 US 21 CFR Part 211 — Current Good Manufacturing Practice for Finished Pharmaceuticals,
+    including 211.100(a) (written procedures; changes to be drafted, reviewed and approved by
+    the quality control unit) and 211.180 (records retention)
+3.4 US 21 CFR Part 11 — Electronic Records; Electronic Signatures
+3.5 EudraLex Volume 4, EU GMP Guide, Chapter 1 (Pharmaceutical Quality System) and
+    Annex 15 (Qualification and Validation), Section 11 (Change Control)
+3.6 SOP-QA-018 Change Control
+3.7 SOP-DC-003 Document Management and Control
+3.8 SOP-TR-007 Training Management
+
+--------------------------------------------------------------------------------
+4. DEFINITIONS
+--------------------------------------------------------------------------------
+4.1 Regulatory Update: Any new, revised or withdrawn regulation, guidance, guideline, pharmacopoeial
+    monograph or health authority communication that may affect GxP activities.
+4.2 Applicability Determination: A documented decision on whether a Regulatory Update affects
+    Meridian products, processes, sites or systems.
+4.3 Impact Assessment (IA): A structured evaluation identifying affected SOPs, processes, products,
+    systems, registrations and training.
+4.4 Risk Classification: Categorisation of the change as Low, Medium or High based on potential
+    impact on product quality, patient safety and data integrity, applying ICH Q9 principles.
+4.5 Change Request (CR): The controlled record in the electronic Quality Management System (eQMS)
+    that documents the proposed change, approvals and implementation evidence.
+4.6 Change Control Board (CCB): The cross-functional forum that approves Medium and High risk
+    changes. The CCB meets weekly on Tuesdays.
+4.7 Regulatory Intelligence Log (RIL): The controlled spreadsheet used to record all incoming
+    Regulatory Updates and their applicability determinations.
+
+--------------------------------------------------------------------------------
+5. ROLES AND RESPONSIBILITIES
+--------------------------------------------------------------------------------
+5.1 Regulatory Affairs (RA) Specialist
+    - Monitors designated regulatory sources daily
+    - Logs Regulatory Updates in the RIL
+    - Performs Initial Review and Applicability Determination
+    - Drafts the Regulatory Summary
+
+5.2 Regulatory Affairs Manager
+    - Reviews applicability rationale for updates determined "Not Applicable"
+    - Co-reviews filing implications during Compliance Review
+    - Approves regulatory interpretation
+
+5.3 Quality Assurance (QA) Analyst
+    - Coordinates the Impact Assessment with Subject Matter Experts (SMEs)
+    - Consolidates SME feedback into the IA form (FRM-QA-042-01)
+    - Performs Implementation Verification and closes the CR
+
+5.4 Subject Matter Experts (SMEs)
+    - Provide functional impact input (Manufacturing, QC Laboratory, Validation, Supply Chain, IT)
+    - Respond to IA requests within 5 business days
+
+5.5 QA Manager
+    - Assigns Risk Classification
+    - Determines the approval pathway
+    - Chairs the CCB
+
+5.6 Process Owner
+    - Creates the Change Request in the eQMS
+    - Owns implementation of approved actions
+
+5.7 Compliance Officer
+    - Performs Compliance Review of the proposed change
+    - Confirms alignment with internal policies and data integrity requirements
+
+5.8 Head of Quality and Site Head
+    - Approve High risk changes (dual electronic signature, 21 CFR Part 11 compliant)
+
+5.9 Document Control Specialist
+    - Revises and issues controlled documents in the Document Management System (DMS)
+
+5.10 Training Coordinator
+    - Assigns and tracks training in the Learning Management System (LMS)
+
+--------------------------------------------------------------------------------
+6. PROCEDURE
+--------------------------------------------------------------------------------
+
+6.1 Receipt and Logging of Regulatory Update
+    6.1.1 The RA Specialist shall review the following sources each business day: FDA Federal
+          Register notices and guidance pages, EMA news and scientific guidelines, ICH
+          announcements, USP/EP pharmacopoeial forum publications, and the subscribed regulatory
+          intelligence e-mail digest.
+    6.1.2 Each potentially relevant item shall be entered in the RIL within 2 business days of
+          publication, recording: source, publication date, title, URL, document type, and
+          issuing authority.
+    6.1.3 The RA Specialist shall download the source document and store it in the RA shared drive
+          folder "Regulatory Intelligence / <Year> / <Month>".
+    6.1.4 Typical effort: 15 to 25 minutes per item. Approximately 40 items per week.
+    Inputs: Regulatory source publications; e-mail digest.
+    Outputs: RIL entry; archived source document.
+    Systems: RIL (Excel), RA shared drive, e-mail.
+
+6.2 Initial Review and Applicability Determination
+    6.2.1 For each logged item, the RA Specialist shall read the full source document and determine
+          whether it applies to any Meridian product, process, site, registration or system.
+    6.2.2 The applicability rationale shall be recorded in the RIL. Items determined "Not Applicable"
+          shall be reviewed and countersigned by the RA Manager within 5 business days.
+    6.2.3 Items determined "Applicable" shall proceed to 6.3. The RA Specialist shall prepare a
+          Regulatory Summary (maximum 2 pages) describing the change, its effective/compliance
+          date and the sections of the regulation affected.
+    6.2.4 Typical effort: 2 to 4 hours per item for full review; 1 hour for the Regulatory Summary.
+    Decision: Applicable / Not Applicable.
+    Inputs: Source document; RIL entry; product and site registration list.
+    Outputs: Applicability rationale; Regulatory Summary (FRM-RA-042-02); RA Manager countersign.
+    Systems: RIL (Excel), RA shared drive, e-mail.
+
+6.3 Impact Assessment
+    6.3.1 The QA Analyst shall open an Impact Assessment form (FRM-QA-042-01) and identify
+          candidate affected areas using the SOP master list, the product register and the
+          validated systems inventory.
+    6.3.2 The QA Analyst shall send the Regulatory Summary and IA form to the relevant SMEs by e-mail
+          requesting functional impact input within 5 business days.
+    6.3.3 SMEs shall identify affected SOPs, batch records, specifications, validation documents,
+          registrations and training curricula in their area and estimate implementation effort.
+    6.3.4 The QA Analyst shall consolidate responses, resolve conflicts through follow-up meetings,
+          and finalise the IA. Where SME responses are not received within 5 business days the QA
+          Analyst shall escalate to the functional manager.
+    6.3.5 Typical elapsed time: 7 to 12 business days. Typical QA Analyst effort: 6 to 10 hours.
+          Average of 3.2 follow-up e-mails per SME per assessment.
+    Inputs: Regulatory Summary; SOP master list; product register; validated systems inventory.
+    Outputs: Completed IA form listing affected documents, processes, products and systems.
+    Systems: E-mail, DMS (read), SOP master list (Excel), eQMS (read).
+
+6.4 Risk Classification
+    6.4.1 The QA Manager shall review the completed IA and assign a Risk Classification:
+          - LOW: Administrative or editorial; no impact on product quality, patient safety or
+            registered details (e.g. reference updates, terminology alignment).
+          - MEDIUM: Affects procedures or controls but no change to registered details or critical
+            process parameters.
+          - HIGH: Affects registered details, critical quality attributes, critical process
+            parameters, data integrity controls, or requires a regulatory submission.
+    6.4.2 The QA Manager shall document the classification rationale on the IA form.
+    6.4.3 The approval pathway shall be determined as follows:
+          - LOW: Process Owner and QA Manager approval.
+          - MEDIUM: CCB approval.
+          - HIGH: CCB approval plus Head of Quality and Site Head electronic signatures.
+    6.4.4 Typical effort: 1 to 2 hours. Typical wait for QA Manager availability: 2 to 3 business days.
+    Decision: Low / Medium / High risk; approval pathway.
+    Inputs: Completed IA form.
+    Outputs: Risk Classification and rationale; approval pathway.
+    Systems: IA form (Word/PDF), e-mail.
+
+6.5 Change Request Creation
+    6.5.1 The Process Owner shall create a Change Request in the eQMS, completing all 14 mandatory
+          fields including: change title, description, justification, regulatory reference, risk
+          classification, affected documents, affected products, affected systems, proposed
+          implementation date, training impact, validation impact, and regulatory filing impact.
+    6.5.2 The Process Owner shall attach the Regulatory Summary, the IA form and the source
+          regulatory document to the CR.
+    6.5.3 The Process Owner shall define implementation action items with owners and due dates.
+    6.5.4 Typical effort: 1.5 to 2.5 hours, of which approximately 60 percent is re-entering
+          information already present in the IA form and Regulatory Summary.
+    Inputs: Regulatory Summary; IA form; Risk Classification.
+    Outputs: CR record in eQMS with attachments and action plan.
+    Systems: eQMS.
+
+6.6 Compliance and Regulatory Review
+    6.6.1 The Compliance Officer shall review the CR to confirm: the regulatory interpretation is
+          correct; internal policies are aligned; data integrity requirements (ALCOA+) are
+          addressed; and the proposed actions are complete.
+    6.6.2 The RA Manager shall assess whether the change requires a regulatory submission
+          (e.g. variation, supplement, notification) and document the filing strategy.
+    6.6.3 Review comments shall be returned to the Process Owner via the eQMS. The CR shall not
+          proceed to approval until all comments are closed.
+    6.6.4 Typical elapsed time: 3 to 5 business days. On average 1.6 review cycles are required.
+    Inputs: CR record with attachments.
+    Outputs: Compliance review record; filing strategy; closed review comments.
+    Systems: eQMS, regulatory submissions tracker.
+
+6.7 Change Control Board Approval
+    6.7.1 Medium and High risk CRs shall be presented at the weekly CCB meeting by the Process Owner.
+    6.7.2 The CCB shall approve, reject, or return the CR with conditions. Decisions and rationale
+          shall be recorded in the eQMS by the QA Manager.
+    6.7.3 High risk CRs shall additionally require electronic signatures from the Head of Quality
+          and the Site Head in the eQMS in accordance with 21 CFR Part 11.
+    6.7.4 Low risk CRs are approved electronically by the Process Owner and QA Manager without
+          CCB presentation.
+    6.7.5 Typical wait for the next CCB meeting: average 4.5 business days. Approximately 20 percent
+          of CRs are returned for additional information and re-presented the following week.
+    Decision: Approve / Reject / Return with conditions.
+    Inputs: Reviewed CR; CCB agenda.
+    Outputs: Approval decision with electronic signatures; CCB minutes.
+    Systems: eQMS, meeting minutes (Word), e-mail.
+
+6.8 Documentation Update
+    6.8.1 The Document Control Specialist shall initiate document revisions in the DMS for each
+          affected controlled document listed in the CR.
+    6.8.2 The document author shall prepare redlined revisions incorporating the regulatory
+          requirement. The Document Control Specialist shall verify formatting, numbering and
+          cross-references per SOP-DC-003.
+    6.8.3 Revised documents shall be routed for review and approval in the DMS. Approvers include the
+          document owner, QA, and functional heads as defined in the document's approval matrix.
+    6.8.4 The Document Control Specialist shall set the effective date, typically 30 days after
+          approval to allow for training, and shall archive superseded versions.
+    6.8.5 Typical elapsed time: 10 to 15 business days per document set. Typical Document Control
+          effort: 3 to 4 hours per document. Average of 4 documents affected per regulatory change.
+    Inputs: Approved CR; current controlled documents.
+    Outputs: Approved revised documents with effective dates; superseded versions archived.
+    Systems: DMS, eQMS (status update).
+
+6.9 Training Assignment and Completion
+    6.9.1 The Training Coordinator shall identify affected personnel using the curriculum matrix in
+          the LMS and assign training on the revised documents.
+    6.9.2 Training shall be completed before the document effective date. Read-and-understand
+          training is acceptable for Low and Medium risk changes; instructor-led training with
+          assessment is required for High risk changes.
+    6.9.3 The Training Coordinator shall monitor completion weekly and send reminders. Completion
+          below 95 percent at 5 days before the effective date shall be escalated to the functional
+          manager.
+    6.9.4 Typical elapsed time: 20 to 30 calendar days. Typical Training Coordinator effort: 4 to 6
+          hours per change including reminders and reporting.
+    Inputs: Approved revised documents; curriculum matrix.
+    Outputs: Training assignments; completion records; escalation notices.
+    Systems: LMS, e-mail.
+
+6.10 Implementation Verification and Change Closure
+    6.10.1 The QA Analyst shall verify that all CR action items are complete, all affected
+           documents are effective, training completion is at least 95 percent, and any regulatory
+           submissions have been filed.
+    6.10.2 For High risk changes, an effectiveness check shall be scheduled 90 days after
+           implementation and recorded in the eQMS.
+    6.10.3 The QA Analyst shall close the CR in the eQMS. The RIL entry shall be updated with the
+           CR number and closure date.
+    6.10.4 Typical effort: 2 to 3 hours. Typical elapsed time: 2 to 4 business days.
+    Inputs: CR record; DMS status; LMS completion report; submissions tracker.
+    Outputs: Closed CR; effectiveness check schedule; updated RIL.
+    Systems: eQMS, DMS, LMS, RIL (Excel).
+
+--------------------------------------------------------------------------------
+7. RECORDS
+--------------------------------------------------------------------------------
+7.1 The following records shall be retained per 21 CFR 211.180 and the site retention schedule:
+    Regulatory Intelligence Log; Regulatory Summary (FRM-RA-042-02); Impact Assessment form
+    (FRM-QA-042-01); Change Request and approvals (eQMS); CCB minutes; revised controlled documents
+    (DMS); training records (LMS); effectiveness check records.
+7.2 Electronic records and signatures shall comply with 21 CFR Part 11, including audit trails
+    that capture the identity of the person, the date and time, and the action performed.
+
+--------------------------------------------------------------------------------
+8. PERFORMANCE METRICS (INTERNAL, ILLUSTRATIVE)
+--------------------------------------------------------------------------------
+8.1 Median end-to-end cycle time from regulatory publication to CR closure (excluding training
+    window): 48 business days. Target: 30 business days.
+8.2 Percentage of applicable updates identified within 2 business days of publication: 71 percent.
+8.3 CRs returned by CCB for additional information: 20 percent.
+8.4 Documentation errors identified at QA review (cross-reference, numbering, missing regulatory
+    citation): 1.4 per document set.
+
+--------------------------------------------------------------------------------
+9. TRAINING
+--------------------------------------------------------------------------------
+9.1 All personnel in roles listed in Section 5 shall complete read-and-understand training on this
+    SOP prior to performing any activity described herein.
+
+--------------------------------------------------------------------------------
+10. REVISION HISTORY
+--------------------------------------------------------------------------------
+Version 4.2 — 01-Mar-2025 — Added performance metrics (Section 8); clarified CCB return process.
+Version 4.1 — 15-Sep-2023 — Aligned risk classification wording with ICH Q9(R1).
+Version 4.0 — 02-Feb-2022 — Migrated CR process to eQMS; retired paper CR form.
+
+END OF DOCUMENT
